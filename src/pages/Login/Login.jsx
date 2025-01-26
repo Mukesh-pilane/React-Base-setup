@@ -1,26 +1,46 @@
-import React from 'react'
-import styles from "./Login.module.scss"
+import {
+  Anchor,
+  Button,
+  Checkbox,
+  Group,
+  Paper,
+  PasswordInput,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
+import classes from './Login.module.scss';
+import { Link } from 'react-router-dom';
 
-const Login = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // login logic
-  }
+const AuthenticationImage = () => {
   return (
-    <div className={styles.loginContainer}>
-      <div className={styles.right}>
-        <form submit={handleSubmit}>
-          <label htmlFor="email">Email</label>
-          <input type="text" name="email" />
-          <label htmlFor="password">Pasword</label>
-          <input type="password" name="password" />
-          <button>login</button>
-        </form>
-      </div>
-      <div className={styles.left}>
-      </div>
+    <div className={classes.wrapper}>
+      <Paper className={classes.form} radius={0} p={30}>
+        <Title order={2} className={classes.title} ta="center" mt="md" mb={50}>
+          Welcome back to HotelSync!
+        </Title>
+
+        <TextInput label="Email address" placeholder="hello@gmail.com" size="md" />
+        <PasswordInput label="Password" placeholder="Your password" mt="md" size="md" />
+        <Group justify="space-between" mt="lg">
+          <Checkbox label="Remember me" />
+          <Anchor size="sm" component={Link} to="/forgotpassword">
+            Forgot password?
+          </Anchor>
+        </Group>
+        <Button fullWidth mt="xl" size="md">
+          Login
+        </Button>
+
+        <Text ta="center" mt="md">
+          Don&apos;t have an account?{' '}
+          <Anchor component={Link} to="/register" fw={700}>
+            Register
+          </Anchor>
+        </Text>
+      </Paper>
     </div>
-  )
+  );
 }
 
-export default Login
+export default AuthenticationImage

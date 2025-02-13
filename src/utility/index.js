@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { notifications } from '@mantine/notifications';
 
 export const configToast = {
   position: "top-right",
@@ -10,16 +10,30 @@ export const configToast = {
   progress: undefined,
 };
 
-export const showSuccessNotification = (message, configToast) => {
-  return toast.success(message, configToast);
+export const showSuccessNotification = (title, message, configToast) => {
+  return notifications.show({
+    title: title,
+    message: message,
+    ...configToast
+  });
 };
 
-export const showErrorNotification = (message, configToast) => {
-  return toast.error(message, configToast);
+export const showErrorNotification = (title, message, configToast) => {
+  return notifications.show({
+    color: 'red',
+    title: title,
+    message: message,
+    ...configToast
+  })
 };
 
-export const showDeleteNotification = (message, configToast) => {
-  return toast.success(message, configToast);
+export const showDeleteNotification = (title, message, configToast) => {
+  return notifications.show({
+    color: 'red',
+    title: title,
+    message: message,
+    ...configToast
+  });
 };
 
 export const getChangedValues = (values, initialValues) => {

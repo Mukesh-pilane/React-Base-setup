@@ -1,24 +1,26 @@
 import axios from "axios";
-import { showErrorNotification } from "../../utility/index";
+import { clearToken, getToken, showErrorNotification } from "../../utility/index";
+import { getApiParams } from "../../utility/getApiParams";
 
 // Step-1: Create a new Axios instance with a custom config.
 // The timeout is set to 20s. If the request takes longer than
 // that then the request will be aborted.
 export const privateRequest = axios.create({
   timeout: 20000,
-  baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
+  baseURL: import.meta.env.VITE_BASE_URL,
 });
 
-const getToken = () => {
-  if (localStorage.getItem("authUser") !== null) {
-    return JSON.parse(localStorage.getItem("authUser")).token;
-  }
-};
+
 
 // Step-2: Create request, response & error handlers
 const requestHandler = (request) => {
   // Token will be dynamic so we can use any app-specific way to always
   // fetch the new token before making the call
+
+  if (request.params) {
+    request.params = getApiParams(request.params); // Clean the query parameters
+  }
+
   request.headers.Authorization = `Bearer ${getToken()}`;
   request.headers.ContentType = "multipart/form-data";
   return request;
@@ -29,11 +31,7 @@ const responseHandler = (response) => {
 };
 
 const errorHandler = (error) => {
-  // if (error.response.status === 401) {
-  //     window.location = '/';
-  //     localStorage.removeItem("authUser")
-  // }
-  // showErrorNotification(error.response.data.message)
+ 
   return Promise.reject(error);
 };
 
@@ -44,38 +42,39 @@ const responseErrorHandler = (error) => {
 
     switch (status) {
       case 401:
-        showErrorNotification("Token Expired! Please Login again")
+        showErrorNotification(`Error ${status}`, "Token Expired! Please Login again")
         setTimeout(() => {
           window.location = '/';
-          localStorage.removeItem("authUser")
+          clearToken()
         }, 1000)
         break;
       case 400:
-        showErrorNotification(message ? message : message || "Inavalid Input/ Bad Request")
+        showErrorNotification(`Error ${status}`,message || "Inavalid Input/ Bad Request")
         break;
       case 403:
-        showErrorNotification(message ? message : message || "Access Denied/ Forbidden")
+        showErrorNotification(`Error ${status}`,message || "Access Denied/ Forbidden")
         break;
       case 404:
-        showErrorNotification(message ? message : message || "Item doesn't exist")
+        showErrorNotification(`Error ${status}`,message || "Item doesn't exist")
         break;
       case 405:
-        showErrorNotification(message ? message : message || "Invalid Request")
+        showErrorNotification(`Error ${status}`,message || "Invalid Request")
         break;
       case 422:
-        showErrorNotification(message ? message : message || "Already Exists")
+        showErrorNotification(`Error ${status}`,message || "Already Exists")
         break;
       case 504:
-        showErrorNotification(message ? message : message || "Network Error")
+        showErrorNotification(`Error ${status}`,message || "Network Error")
         break;
       default:
-        showErrorNotification(message ? message : message || "Some Error Occurred")
+        showErrorNotification(`Error ${status}`,message || "Some Error Occurred")
         break;
     }
   }
   else {
-    showErrorNotification("Some Error Occurred")
+    if (error.name !== 'CanceledError') showErrorNotification('Error 500',"Some Error Occurred");
   }
+
   return Promise.reject(error)
 }
 

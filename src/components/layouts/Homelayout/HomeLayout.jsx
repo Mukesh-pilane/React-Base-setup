@@ -1,22 +1,23 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import styles from "./HomeLayout.module.scss"
-import SideBar from '../../shared/Sidebar/Sidebar'
-import TopBar from '../../shared/TopBar/TopBar'
+import SideBar from '../../Sidebar/Sidebar'
+import TopBar from '../../TopBar/TopBar'
+import { useDisclosure } from '@mantine/hooks'
+
 const HomeLayout = () => {
+    const [sidebarOpened, {close: sidebarClose, toggle:sidebarToggle}] = useDisclosure(false);
+
     return (
-        <div>
             <div className={styles?.main_container}>
-                <SideBar />
+                <SideBar sidebarOpened={sidebarOpened} sidebarClose={sidebarClose}/>
                 <div className={styles?.rightSideContainer}>
-                    <TopBar />
+                    <TopBar sidebarToggle={sidebarToggle}/>
                     <div className={styles?.outlet_content}>
                         <Outlet />
                     </div>
-
                 </div>
             </div>
-        </div>
     )
 }
 
